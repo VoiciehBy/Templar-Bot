@@ -31,10 +31,8 @@ class botClient(d.Client):
             print(c.CANNOT_FIND_CHANNEL)
 
     async def checkForValgor(self, msg):
-        txt = c.DEUS_VULT
         if (msg.content.lower().startswith(c.TEST)):
-            await self.sendMessage(txt)
-            txt = msg.author.name
+            txt = msg.author.display_name
 
             if (str(msg.author.id) == c.VALGOR_ID):
                 txt += c.IS_VALGOR

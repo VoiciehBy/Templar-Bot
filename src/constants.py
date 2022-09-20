@@ -43,7 +43,7 @@ ROLE = "CRUSADER"
 VALGOR_ID = "VALGOR_ID"
 
 TEST = "test"
-VALGOR = "Valgor"
+VALGOR = "Valgor!111"
 IS = " to "
 NOT = " nie "
 IS_VALGOR = IS + VALGOR
