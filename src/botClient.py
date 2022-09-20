@@ -73,7 +73,7 @@ class botClient(d.Client):
                 await self.sendMessage(str(thread.link))
         else:
             print(c.NO_MATCHING_THREADS)
-            #await self.sendMessage(str("test41"))
+            #await self.sendMessage(str("test76"))
 
         u.delete(threads)
 
