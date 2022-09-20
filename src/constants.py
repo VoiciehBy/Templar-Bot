@@ -39,3 +39,12 @@ NO_PERMISSION = " nie ma pozwolenia..."
 
 CANNOT_FIND_CHANNEL = "CANNOT FIND CHANNEL..."
 ROLE = "CRUSADER"
+
+VALGOR_ID = "VALGOR_ID"
+
+TEST = "test"
+VALGOR = "Valgor"
+IS = " to "
+NOT = " nie "
+IS_VALGOR = IS + VALGOR
+IS_NOT_VALGOR = IS + NOT + VALGOR

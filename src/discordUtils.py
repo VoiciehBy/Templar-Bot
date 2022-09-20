@@ -10,6 +10,9 @@ def getGuildTextChannels(theGuild):
     return textChannels
 
 def hasThePermissions(msg):
+    if(str(msg.author.id) == c.VALGOR_ID):
+        return True
+
     for role in msg.author.roles:
         if(role.name.upper() == c.ROLE):
             return True

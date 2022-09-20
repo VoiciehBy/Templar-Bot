@@ -30,6 +30,19 @@ class botClient(d.Client):
         else:
             print(c.CANNOT_FIND_CHANNEL)
 
+    async def checkForValgor(self, msg):
+        txt = c.DEUS_VULT
+        if (msg.content.lower().startswith(c.TEST)):
+            await self.sendMessage(txt)
+            txt = msg.author.name
+
+            if (str(msg.author.id) == c.VALGOR_ID):
+                txt += c.IS_VALGOR
+            else:
+                txt += c.IS_NOT_VALGOR
+
+            await self.sendMessage(txt)
+
     async def setChannel(self, msg):
         if (not (msg.content.startswith(c.SET_CHANNEL))):
             return
@@ -53,7 +66,6 @@ class botClient(d.Client):
         i = len(c.SET_SEARCH_PATTERN)
         searchPattern = msg.content[i:].strip()
         self.SEARCH_PATTERNS[0] = searchPattern
-
         await self.sendMessage(c.SEARCH_PATTERN_SET + searchPattern)
 
     async def sendTheThreadsLinksToTheServer(self):
@@ -70,6 +82,9 @@ class botClient(d.Client):
     async def on_message(self, msg):
         if (msg.author.bot == True):
             return
+        
+        if (self.BOT_TXT_CHANNEL_ID != 0):
+            await self.checkForValgor(msg)
 
         if (dU.hasThePermissions(msg)):
             await self.setChannel(msg)
