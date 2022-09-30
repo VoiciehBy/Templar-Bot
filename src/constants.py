@@ -6,7 +6,7 @@ load_dotenv()
 HELLO = " has connected!11 "
 CANNOT_FIND_CHANNEL = "CANNOT FIND CHANNEL..."
 
-VALGOR_ID = "VALGOR_ID"
+VALGOR_ID = os.getenv("VALGOR_ID")
 
 TEST = "test"
 VALGOR = "Valgor!111"
@@ -48,3 +48,6 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 ROLE = "CRUSADER"
 NO_PERMISSION = " nie ma pozwolenia..."
+
+TEST0_GUILD_ID = os.getenv("TEST0_GUILD_ID")
+TEST1_GUILD_ID = os.getenv("TEST1_GUILD_ID")
