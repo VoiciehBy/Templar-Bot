@@ -1,4 +1,5 @@
 import discord as d
+from discord import app_commands
 import discordUtils as dU
 import constants as c
 import goodThreads as gT
@@ -14,18 +15,14 @@ class botClient(d.Client):
         super().__init__(*args, **kwargs)
 
     async def on_ready(self):
+        await self.wait_until_ready()
         print(f"{self.user}" + c.HELLO)
 
-    async def sendMessage(self, txt):
-        theGuild = self.getTest0Guild()  #change test guild
-        theTxtChannel = 0
-        textChannels = dU.getGuildTextChannels(theGuild)
-
-        for textChannel in textChannels:
-            if (str(textChannel.id) == str(self.BOT_TXT_CHANNEL_ID)):
-                theTxtChannel = textChannel
-                break
-        if (theTxtChannel != 0):
+    async def sendMessage(self, txt, guild):
+        textChannels = dU.getGuildTextChannels(guild)
+        theTxtChannel = dU.getTextChannelById(textChannels,
+                                              self.BOT_TXT_CHANNEL_ID)
+        if (theTxtChannel is not None):
             await theTxtChannel.send(txt)
         else:
             print(c.CANNOT_FIND_CHANNEL)
@@ -33,29 +30,22 @@ class botClient(d.Client):
     async def checkForValgor(self, msg):
         if (msg.content.lower().startswith(c.TEST)):
             txt = msg.author.display_name
-
             if (str(msg.author.id) == c.VALGOR_ID):
                 txt += c.IS_VALGOR
             else:
                 txt += c.IS_NOT_VALGOR
-
             await self.sendMessage(txt)
 
     async def setChannel(self, msg):
         if (not (msg.content.startswith(c.SET_CHANNEL))):
             return
-
+            
         i = len(c.SET_CHANNEL)
         channelName = msg.content[i:].strip()
-        theGuild = msg.guild
-        textChannels = dU.getGuildTextChannels(theGuild)
-
-        if (textChannels):
-            for textChannel in textChannels:
-                if (str(textChannel.name) == str(channelName)):
-                    self.BOT_TXT_CHANNEL_ID = textChannel.id
-                    break
-            await self.sendMessage(c.CHANNEL_SET + channelName)
+        textChannels = dU.getGuildTextChannels(msg.guild)
+        theTxtChannel = dU.getTextChannelByName(textChannels, channelName)
+        self.BOT_TXT_CHANNEL_ID = theTxtChannel.id
+        await self.sendMessage(c.CHANNEL_SET + channelName, msg.guild)
 
     async def setSearchPattern(self, msg):
         if (not (msg.content.startswith(c.SET_SEARCH_PATTERN))):
@@ -64,52 +54,40 @@ class botClient(d.Client):
         i = len(c.SET_SEARCH_PATTERN)
         searchPattern = msg.content[i:].strip()
         self.SEARCH_PATTERNS[0] = searchPattern
-        await self.sendMessage(c.SEARCH_PATTERN_SET + searchPattern)
+        
+        await self.sendMessage(c.SEARCH_PATTERN_SET + searchPattern, msg.guild)
 
     async def sendTheThreadsLinksToTheServer(self):
         threads = gT.goodThreads(self.SEARCH_PATTERNS)
         if (threads):
             for thread in threads:
-                await self.sendMessage(str(thread.link))
+                await self.sendMessage(str(thread.link), msg.guild)
         else:
             print(c.NO_MATCHING_THREADS)
-            #await self.sendMessage(str("test76"))
-
         u.delete(threads)
 
     async def on_message(self, msg):
         if (msg.author.bot == True):
             return
-        
+            
         if (self.BOT_TXT_CHANNEL_ID != 0):
             await self.checkForValgor(msg)
 
         if (dU.hasThePermissions(msg)):
             await self.setChannel(msg)
             await self.setSearchPattern(msg)
-            await self.sendMessage(c.DEUS_VULT)
+            await self.sendMessage(c.DEUS_VULT, msg.guild)
         else:
             print(msg.author.display_name + c.NO_PERMISSION)
-            await self.sendMessage(msg.author.display_name + c.NO_PERMISSION)
+            await self.sendMessage(msg.author.display_name + c.NO_PERMISSION,
+                                   msg.guild)
 
-    async def doTheTask(self):
+    async def checkForThreads(self):
         await self.wait_until_ready()
-
         while not self.is_closed():
             await self.sendTheThreadsLinksToTheServer()
             print(c.SLEEPING_TXT)
             await a.sleep(c.SLEEP_TIME_IN_SECONDS)
 
-    def getGuild(self, guildID):
-        for guild in self.guilds:
-            if (str(guild.id) == str(guildID)):
-                return guild
-
-    def getTest0Guild(self):
-        return self.getGuild(c.TEST0_GUILD_ID)
-
-    def getTest1Guild(self):
-        return self.getGuild(c.TEST1_GUILD_ID)
-
     async def setup_hook(self) -> None:
-        self.bg_task = self.loop.create_task(self.doTheTask())
+        self.bg_task = self.loop.create_task(self.checkForThreads())

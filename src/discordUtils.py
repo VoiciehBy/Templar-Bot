@@ -9,6 +9,16 @@ def getGuildTextChannels(theGuild):
             textChannels.append(theChannel)
     return textChannels
 
+def getTextChannelById(textChannels,channelId):
+     for textChannel in textChannels:
+            if (str(textChannel.id) == str(channelId)):
+                return textChannel
+
+def getTextChannelByName(textChannels,channelName):
+     for textChannel in textChannels:
+            if (str(textChannel.name) == str(channelName)):
+                return textChannel
+
 def hasThePermissions(msg):
     if(str(msg.author.id) == c.VALGOR_ID):
         return True
