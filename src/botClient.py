@@ -34,12 +34,12 @@ class botClient(d.Client):
                 txt += c.IS_VALGOR
             else:
                 txt += c.IS_NOT_VALGOR
-            await self.sendMessage(txt)
+            await self.sendMessage(txt, msg.guild)
 
     async def setChannel(self, msg):
         if (not (msg.content.startswith(c.SET_CHANNEL))):
             return
-            
+
         i = len(c.SET_CHANNEL)
         channelName = msg.content[i:].strip()
         textChannels = dU.getGuildTextChannels(msg.guild)
@@ -54,7 +54,7 @@ class botClient(d.Client):
         i = len(c.SET_SEARCH_PATTERN)
         searchPattern = msg.content[i:].strip()
         self.SEARCH_PATTERNS[0] = searchPattern
-        
+
         await self.sendMessage(c.SEARCH_PATTERN_SET + searchPattern, msg.guild)
 
     async def sendTheThreadsLinksToTheServer(self):
@@ -69,8 +69,8 @@ class botClient(d.Client):
     async def on_message(self, msg):
         if (msg.author.bot == True):
             return
-            
-        if (self.BOT_TXT_CHANNEL_ID != 0):
+
+        if (self.BOT_TXT_CHANNEL_ID != "0"):
             await self.checkForValgor(msg)
 
         if (dU.hasThePermissions(msg)):
